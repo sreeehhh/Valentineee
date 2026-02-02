@@ -6,6 +6,7 @@
 <title>Saji ❤️</title>
 
 <style>
+/* 🌈 Animated background */
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
@@ -23,6 +24,7 @@ body {
   100% { background-position: 0% 50%; }
 }
 
+/* 💓 Card */
 .container {
   margin: 12vh auto;
   width: 90%;
@@ -45,6 +47,7 @@ body {
 h1 { font-size: 2.1em; }
 p  { font-size: 1.15em; min-height: 3em; }
 
+/* ✨ Buttons */
 button {
   padding: 16px 30px;
   font-size: 1.05em;
@@ -68,6 +71,7 @@ button {
   position: absolute;
 }
 
+/* 💖 Floating hearts */
 .heart {
   position: absolute;
   bottom: -40px;
@@ -101,7 +105,7 @@ audio { display: none; }
 
 <div class="container" id="box">
   <h1 id="title">Hey Saji 💕</h1>
-  <p id="text">I made this just for you… tap carefully 😏</p>
+  <p id="text"></p>
   <button class="yes" id="tapBtn" onclick="next()">Tap here 👀</button>
 </div>
 
@@ -120,19 +124,27 @@ function fadeMusic() {
   }, 200);
 }
 
-/* 💬 Emoji-safe typing effect */
+/* 💬 Typing effect */
 function typeText(el, text, speed = 40) {
   el.innerHTML = "";
-  const chars = Array.from(text); // handles emojis safely
   let i = 0;
   const t = setInterval(() => {
-    el.innerHTML += chars[i];
+    el.innerHTML += text.charAt(i);
     i++;
-    if (i >= chars.length) clearInterval(t);
+    if (i >= text.length) clearInterval(t);
   }, speed);
 }
 
-/* 💖 Story steps */
+/* 🔒 Lock */
+if (localStorage.getItem("valentineLocked") === "true") {
+  window.onload = () => {
+    document.getElementById("box").innerHTML = `
+      <h1>I love you, Saji ❤️</h1>
+      <p>You already know how I feel 😌💖</p>
+    `;
+  };
+}
+
 const steps = [
   { title: "Quick question 😌", text: "Are you ready for something cute?" },
   { title: "Good 😄", text: "Because you make my days better." },
@@ -140,19 +152,10 @@ const steps = [
   { title: "So Saji… 💖", text: "Will you be my Valentine?" }
 ];
 
-const noMessages = [
-  "Hmm… that was a misclick 😌",
-  "Try again 💕 I know you want to",
-  "Nice try 😏 destiny says YES",
-  "You are just teasing me now 😄",
-  "Okay okay… one more try 💖"
-];
-
-let stepIndex = 0;
-let noIndex = 0;
+let i = 0;
+let finalShown = false;
 let yesScale = 1;
 let yesGrowInterval = null;
-let finalShown = false;
 
 function next() {
   if (music.paused) {
@@ -160,24 +163,27 @@ function next() {
     fadeMusic();
   }
 
-  if (stepIndex < steps.length) {
-    document.getElementById("title").innerText = steps[stepIndex].title;
-    typeText(document.getElementById("text"), steps[stepIndex].text);
+  if (i < steps.length) {
+    document.getElementById("title").innerText = steps[i].title;
+    typeText(document.getElementById("text"), steps[i].text);
   }
 
-  if (stepIndex === steps.length - 1 && !finalShown) {
+  if (i === steps.length - 1 && !finalShown) {
     finalShown = true;
+
+    // remove tap button
     document.getElementById("tapBtn").remove();
 
     document.getElementById("box").innerHTML += `
       <br>
       <button class="yes" id="yesBtn" onclick="yes()">YES 💕</button>
-      <button class="no" id="noBtn">NO 🙄</button>
+      <button class="no" id="no">NO 🙄</button>
     `;
 
-    document.getElementById("noBtn").addEventListener("mouseover", noTry);
-    document.getElementById("noBtn").addEventListener("touchstart", noTry);
+    document.getElementById("no").addEventListener("mouseover", moveNo);
+    document.getElementById("no").addEventListener("touchstart", moveNo);
 
+    // YES grows every second 😏
     yesGrowInterval = setInterval(() => {
       const yesBtn = document.getElementById("yesBtn");
       if (!yesBtn) return;
@@ -185,35 +191,27 @@ function next() {
       yesBtn.style.transform = `scale(${yesScale})`;
     }, 1000);
   }
-
-  stepIndex++;
-}
-
-function noTry() {
-  const noBtn = document.getElementById("noBtn");
-  noBtn.style.left = Math.random() * 70 + "vw";
-  noBtn.style.top = Math.random() * 70 + "vh";
-
-  typeText(
-    document.getElementById("text"),
-    noMessages[noIndex % noMessages.length]
-  );
-  noIndex++;
+  i++;
 }
 
 function yes() {
   clearInterval(yesGrowInterval);
+  localStorage.setItem("valentineLocked", "true");
   launchConfetti();
   document.getElementById("box").innerHTML = `
     <h1>I love you, Saji ❤️</h1>
     <p>
-      I knew you’d say yes 😌💖<br><br>
-      Thank you for choosing me.<br><br>
-      Happy Valentine’s Day 💘<br><br>
-      — Always yours,<br>
-      <strong>Sreehari</strong> ❤️
+      Forever my favorite person 💖<br><br>
+      Happy Valentine’s Day 😌<br><br>
+      — Sreehari ❤️
     </p>
   `;
+}
+
+function moveNo() {
+  const no = document.getElementById("no");
+  no.style.left = Math.random() * 70 + "vw";
+  no.style.top = Math.random() * 70 + "vh";
 }
 
 /* 💖 Floating hearts */
