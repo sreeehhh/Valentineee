@@ -77,7 +77,7 @@ button {
 
 @keyframes float {
   from { transform: translateY(0) scale(1); opacity: 1; }
-  to { transform: translateY(-120vh) scale(1.7); opacity: 0; }
+  to   { transform: translateY(-120vh) scale(1.7); opacity: 0; }
 }
 
 canvas {
@@ -120,18 +120,19 @@ function fadeMusic() {
   }, 200);
 }
 
-/* 💬 Typing effect */
+/* 💬 Emoji-safe typing effect */
 function typeText(el, text, speed = 40) {
   el.innerHTML = "";
+  const chars = Array.from(text); // handles emojis safely
   let i = 0;
   const t = setInterval(() => {
-    el.innerHTML += text.charAt(i);
+    el.innerHTML += chars[i];
     i++;
-    if (i >= text.length) clearInterval(t);
+    if (i >= chars.length) clearInterval(t);
   }, speed);
 }
 
-/* 💖 Steps */
+/* 💖 Story steps */
 const steps = [
   { title: "Quick question 😌", text: "Are you ready for something cute?" },
   { title: "Good 😄", text: "Because you make my days better." },
@@ -141,9 +142,9 @@ const steps = [
 
 const noMessages = [
   "Hmm… that was a misclick 😌",
-  "Try again, that button is shy 💕",
-  "Nope 😏 destiny says YES",
-  "You’re just teasing me now 😄",
+  "Try again 💕 I know you want to",
+  "Nice try 😏 destiny says YES",
+  "You are just teasing me now 😄",
   "Okay okay… one more try 💖"
 ];
 
