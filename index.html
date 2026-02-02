@@ -1,11 +1,211 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Valentine 💖</title>
-  </head>
-  <body>
-    <h1>IT WORKED 🎉</h1>
-    <p>If you see this, GitHub Pages is fixed.</p>
-  </body>
-</html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saji ❤️</title>
 
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #ff758c, #ff7eb3);
+  color: white;
+  text-align: center;
+  overflow: hidden;
+}
+
+.container {
+  margin: 12vh auto;
+  width: 90%;
+  max-width: 420px;
+  background: rgba(255,255,255,0.18);
+  padding: 30px 20px;
+  border-radius: 25px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+  position: relative;
+  z-index: 2;
+}
+
+h1 { font-size: 2em; }
+p { font-size: 1.1em; }
+
+button {
+  padding: 16px 28px;
+  font-size: 1.05em;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  margin: 12px;
+  min-width: 140px;
+}
+
+.yes {
+  background: #ff2e63;
+  color: white;
+}
+
+.no {
+  background: #444;
+  color: white;
+  position: absolute;
+}
+
+.heart {
+  position: absolute;
+  bottom: -40px;
+  font-size: 22px;
+  animation: float 6s linear infinite;
+}
+
+@keyframes float {
+  from { transform: translateY(0) scale(1); opacity: 1; }
+  to { transform: translateY(-120vh) scale(1.6); opacity: 0; }
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+audio { display: none; }
+</style>
+</head>
+
+<body>
+
+<audio id="music">
+  <source src="perfect.mp3" type="audio/mpeg">
+</audio>
+
+<canvas id="confetti"></canvas>
+
+<div class="container" id="box">
+  <h1 id="title">Hey Saji 💕</h1>
+  <p id="text">I made this just for you… tap carefully 😏</p>
+  <button class="yes" onclick="next()">Tap here 👀</button>
+</div>
+
+<script>
+// 🔒 LOCK CHECK
+if (localStorage.getItem("valentineLocked") === "true") {
+  window.onload = () => {
+    document.getElementById("box").innerHTML = `
+      <h1>I love you, Saji ❤️</h1>
+      <p>
+        You already know how I feel 😌💖<br><br>
+        Happy Valentine’s Day,<br>
+        — Sreehari ❤️
+      </p>
+    `;
+  };
+}
+
+const steps = [
+  { title: "Quick question 😌", text: "Are you ready for something cute?" },
+  { title: "Good 😄", text: "Because you make my days better." },
+  { title: "Fun fact 🚨", text: "You’re my favorite person." },
+  { title: "So Saji… 💖", text: "Will you be my Valentine?" }
+];
+
+let i = 0;
+let finalShown = false;
+
+function next() {
+  document.getElementById("music").play();
+
+  if (i < steps.length) {
+    document.getElementById("title").innerText = steps[i].title;
+    document.getElementById("text").innerText = steps[i].text;
+  }
+
+  if (i === steps.length - 1 && !finalShown) {
+    finalShown = true;
+    document.getElementById("box").innerHTML += `
+      <br>
+      <button class="yes" onclick="yes()">YES 💕</button>
+      <button class="no" id="no">NO 🙄</button>
+    `;
+    document.getElementById("no").addEventListener("touchstart", moveNo);
+    document.getElementById("no").addEventListener("mouseover", moveNo);
+  }
+
+  i++;
+}
+
+function yes() {
+  localStorage.setItem("valentineLocked", "true");
+  launchConfetti();
+  document.getElementById("box").innerHTML = `
+    <h1>I love you, Saji ❤️</h1>
+    <p>
+      And I’ve been wanting to say it like this 😌<br><br>
+      Thank you for being my favorite person.<br><br>
+      Happy Valentine’s Day, my love 💖<br><br>
+      — Always yours,<br>
+      <strong>Sreehari</strong> ❤️
+    </p>
+  `;
+}
+
+function moveNo() {
+  const no = document.getElementById("no");
+  no.style.left = Math.random() * 70 + "vw";
+  no.style.top = Math.random() * 70 + "vh";
+}
+
+// 💖 Floating hearts
+function heart() {
+  const h = document.createElement("div");
+  h.className = "heart";
+  h.innerText = "💖";
+  h.style.left = Math.random() * 100 + "vw";
+  h.style.animationDuration = 4 + Math.random() * 4 + "s";
+  document.body.appendChild(h);
+  setTimeout(() => h.remove(), 7000);
+}
+setInterval(heart, 500);
+
+// 🎉 CONFETTI (FIXED)
+const canvas = document.getElementById("confetti");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let pieces = [];
+
+function launchConfetti() {
+  pieces = [];
+  for (let i = 0; i < 150; i++) {
+    pieces.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      r: Math.random() * 6 + 4,
+      d: Math.random() * 30 + 10,
+      color: `hsl(${Math.random() * 360}, 100%, 70%)`
+    });
+  }
+}
+
+let angle = 0;
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  angle += 0.01;
+  pieces.forEach(p => {
+    p.y += Math.cos(angle + p.d) + 2;
+    p.x += Math.sin(angle);
+    ctx.beginPath();
+    ctx.fillStyle = p.color;
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
+
+</body>
+</html>
